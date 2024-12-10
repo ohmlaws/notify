@@ -3,52 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Push Notifications with Popup</title>
-    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-messaging.js"></script>
+    <title>Push Notifications</title>
+    <!-- Firebase SDKs -->
+   
 </head>
 <body>
     <h1>Push Notifications</h1>
-    <button id="enableNotifications">Enable Notifications</button>
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDTThbBrX_SThsM1d7DaxFSFbQUq61iF5Y",
-            authDomain: "notify-7a8b9.firebaseapp.com",
-            projectId: "notify-7a8b9",
-            storageBucket: "notify-7a8b9.firebasestorage.app",
-            messagingSenderId: "1073549521956",
-            appId: "1:1073549521956:web:f67cfb657d2052a31cd4b1",
-            measurementId: "G-RGVQ8TF07B"
-        };
+   <button id="enableNotifications">Enable Notifications</button>
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const messaging = firebase.messaging();
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const enableNotificationsButton = document.getElementById('enableNotifications');
 
-        // Button to enable notifications
-        document.getElementById('enableNotifications').addEventListener('click', () => {
+        enableNotificationsButton.addEventListener('click', () => {
+            console.log('Button clicked! Requesting permission for notifications...');
+            // Assuming Firebase has already been initialized
             messaging.requestPermission()
-                .then(() => {
-                    return messaging.getToken();
-                })
-                .then(token => {
+                .then(() => messaging.getToken())
+                .then((token) => {
                     console.log('FCM Token:', token);
                     alert('Notifications enabled! Your token: ' + token);
-                    // Send the token to your server if necessary
                 })
-                .catch(err => {
+                .catch((err) => {
                     console.error('Permission denied or error occurred:', err);
                     alert('Notifications permission denied!');
                 });
         });
+    });
+</script>
 
-        // Handle foreground notifications
-        messaging.onMessage(payload => {
-            console.log('Notification received in foreground:', payload);
-            alert(`${payload.notification.title}: ${payload.notification.body}`);
-        });
-
+    <script>
         if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/notify/firebase-messaging-sw.js')
         .then(registration => {
@@ -57,7 +41,7 @@
         .catch(err => {
             console.error('Service Worker registration failed:', err);
         });
-        }
+}
     </script>
 </body>
 </html>
