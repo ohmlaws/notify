@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Push Notifications with Popup</title>
+    <title>Push Notifications</title>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-messaging.js"></script>
 </head>
 <body>
     <h1>Push Notifications</h1>
     <button id="enableNotifications">Enable Notifications</button>
-
-    ত্রিমাত্রিক দুনিয়ায় বহুমাত্রিক তুমি 
-দ্বিমাত্রিক প্রেম আর মাত্রাহীন আমি!🖤
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -27,27 +25,37 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+
         const messaging = firebase.messaging();
 
-        // Button to enable notifications
+        // Service worker registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                    messaging.useServiceWorker(registration);
+                })
+                .catch((err) => {
+                    console.error('Service Worker registration failed:', err);
+                });
+        }
+
+        // Enable Notifications Button
         document.getElementById('enableNotifications').addEventListener('click', () => {
             messaging.requestPermission()
-                .then(() => {
-                    return messaging.getToken();
-                })
-                .then(token => {
+                .then(() => messaging.getToken())
+                .then((token) => {
                     console.log('FCM Token:', token);
                     alert('Notifications enabled! Your token: ' + token);
-                    // Send the token to your server if necessary
                 })
-                .catch(err => {
+                .catch((err) => {
                     console.error('Permission denied or error occurred:', err);
                     alert('Notifications permission denied!');
                 });
         });
 
         // Handle foreground notifications
-        messaging.onMessage(payload => {
+        messaging.onMessage((payload) => {
             console.log('Notification received in foreground:', payload);
             alert(`${payload.notification.title}: ${payload.notification.body}`);
         });
