@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push Notifications</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-messaging.js"></script>
+</head>
+<body>
+    <h1>Push Notifications with FCM</h1>
+
+ত্রিমাত্রিক দুনিয়ায় বহুমাত্রিক তুমি 
+দ্বিমাত্রিক প্রেম আর মাত্রাহীন আমি!🖤
+
+    <script>
+        // Initialize Firebase with your configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTThbBrX_SThsM1d7DaxFSFbQUq61iF5Y",
+  authDomain: "notify-7a8b9.firebaseapp.com",
+  projectId: "notify-7a8b9",
+  storageBucket: "notify-7a8b9.firebasestorage.app",
+  messagingSenderId: "1073549521956",
+  appId: "1:1073549521956:web:f67cfb657d2052a31cd4b1",
+  measurementId: "G-RGVQ8TF07B"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const messaging = firebase.messaging();
+
+        // Request user permission for notifications
+        messaging.requestPermission()
+            .then(() => messaging.getToken())
+            .then(token => {
+                console.log('FCM Token:', token);
+                // Save the token to your server or use it to send notifications
+            })
+            .catch(err => console.error('Error getting permission or token:', err));
+
+        // Handle notifications when the user is on the site
+        messaging.onMessage(payload => {
+            console.log('Notification received:', payload);
+            alert(`${payload.notification.title}: ${payload.notification.body}`);
+        });
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(err => {
+            console.error('Service Worker registration failed:', err);
+        });
+}
+    </script>
+</body>
+</html>
